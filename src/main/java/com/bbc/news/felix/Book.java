@@ -6,16 +6,14 @@ import java.util.List;
 import lombok.Data;
 import lombok.Builder;
 import lombok.Singular;
+import lombok.Getter;
 
 @Builder
-public @Data class Book {
+@Getter
+public class Book {
 
     int id;
     String title;
     String author;
     @Singular List<Recipe> recipes;
-
-    public void addRecipe(Recipe recipe) {
-        this.recipes.add(recipe);
-    }
 }

@@ -35,6 +35,5 @@ public class Main {
                 .title("Unsalted foods")
                 .recipe(pancakesRecipe)
                 .build();
-
     }
 }

@@ -1,10 +1,11 @@
 package com.bbc.news.felix;
 import lombok.Data;
 import lombok.Builder;
+import lombok.Getter;
 
 @Builder
-public @Data class Food {
-
+@Getter
+public class Food {
     int id;
     String name;
     boolean isLiquid;
