@@ -1,9 +1,7 @@
 package com.bbc.news.felix;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import lombok.Data;
 import lombok.Builder;
 import lombok.Singular;
 import lombok.Getter;
