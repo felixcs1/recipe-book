@@ -1,4 +1,4 @@
-package com.bbc.news.felix;
+package com.bbc.news.felix.model;
 import lombok.Builder;
 import lombok.Getter;
 

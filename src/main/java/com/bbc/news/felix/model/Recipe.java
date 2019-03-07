@@ -1,12 +1,14 @@
-package com.bbc.news.felix;
+package com.bbc.news.felix.model;
 
 import java.util.List;
 
 import lombok.Builder;
+import lombok.Getter;
 import lombok.Singular;
 import lombok.extern.slf4j.Slf4j;
 
 @Builder
+@Getter
 @Slf4j
 public class Recipe {
     int id;

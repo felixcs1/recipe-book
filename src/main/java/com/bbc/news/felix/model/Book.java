@@ -1,4 +1,4 @@
-package com.bbc.news.felix;
+package com.bbc.news.felix.model;
 
 import java.util.List;
 
@@ -13,5 +13,5 @@ public class Book {
     int id;
     String title;
     String author;
-    @Singular List<Recipe> recipes;
+    public @Singular List<Recipe> recipes;
 }
