@@ -1,7 +1,6 @@
 package com.bbc.news.felix.ioc;
 
-import com.bbc.news.felix.RecipeEndpoint;
-import com.bbc.news.felix.controller.RecipeController;
+import com.bbc.news.felix.endpoint.RecipeEndpoint;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.springframework.context.annotation.Configuration;
 
