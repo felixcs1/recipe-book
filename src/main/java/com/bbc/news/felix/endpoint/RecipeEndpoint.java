@@ -1,24 +1,26 @@
 package com.bbc.news.felix.endpoint;
 
-import com.bbc.news.felix.controller.RecipeControllerInMemoryImpl;
-import com.bbc.news.felix.controller.RecipeControllerInMemoryImpl;
 import com.bbc.news.felix.controller.RecipeControllerInterface;
-import com.bbc.news.felix.model.Book;
-import com.bbc.news.felix.model.Food;
 import com.bbc.news.felix.model.Recipe;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
 import java.util.ArrayList;
 
-
+@Slf4j
 @Component
 @Path("/recipes")
 @Produces("application/json")
 public class RecipeEndpoint {
 
-    RecipeControllerInterface rc = new RecipeControllerInMemoryImpl();
+    private RecipeControllerInterface rc;
+
+    public RecipeEndpoint(RecipeControllerInterface rc) {
+        log.info("CREATING endpoint");
+        this.rc = rc;
+    }
 
     @GET
     public Response getAllRecipes() {
@@ -59,7 +61,7 @@ public class RecipeEndpoint {
     @Path("/{id}")
     @Consumes("application/json")
     public Response changeRecipe(@PathParam("id") int id, Recipe recipe) {
-        Recipe updatedRecipe = rc.changeRecipe(id, recipe);
+        Recipe updatedRecipe = rc.updateRecipe(id, recipe);
         if (updatedRecipe == null) {
             return Response.status(404).build();
         }

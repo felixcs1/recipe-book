@@ -12,7 +12,7 @@ public interface RecipeControllerInterface {
 
     public Recipe addRecipe(Recipe recipe);
 
-    public Recipe changeRecipe(int id, Recipe recipe);
+    public Recipe updateRecipe(int id, Recipe recipe);
 
     public boolean deleteRecipe(int id);
 }

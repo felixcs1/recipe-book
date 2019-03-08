@@ -2,10 +2,12 @@ package com.bbc.news.felix.controller;
 
 import com.bbc.news.felix.RecipeGenerator;
 import com.bbc.news.felix.model.Recipe;
+import lombok.Getter;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
+@Getter
 public class RecipeControllerInMemoryImpl implements RecipeControllerInterface {
 
     HashMap<Integer, Recipe> recipes;
@@ -36,7 +38,7 @@ public class RecipeControllerInMemoryImpl implements RecipeControllerInterface {
         return newRecipe;
     }
 
-    public Recipe changeRecipe(int id, Recipe recipe) {
+    public Recipe updateRecipe(int id, Recipe recipe) {
         if (recipes.get(id) == null) {
             return null;
         }
