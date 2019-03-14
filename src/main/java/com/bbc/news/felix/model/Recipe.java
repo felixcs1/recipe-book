@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class Recipe {
     int id;
+    String recipe_name;
     @Singular List<String> instructions;
     @Singular List<Food> foods;
     @Singular List<Tool> neededTools;

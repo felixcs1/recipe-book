@@ -20,7 +20,8 @@ public class RecipeControllerTests {
 
     @Test
     public void getAllRecipesShouldReturnAnArrayListOfRecipes() {
-        assertThat(rc.getAllRecipes(), instanceOf(ArrayList.class));
+        // DO this instead of instance of --> Recipe result = rc.getRecipeById(0);
+        assertThat(rc.getAllRecipes(), instanceOf(ArrayList.class)); // dont need
         assertThat(rc.getAllRecipes().get(0), instanceOf(Recipe.class));
         assertThat(rc.getAllRecipes().size(), equalTo(rc.getRecipes().size()));
     }
