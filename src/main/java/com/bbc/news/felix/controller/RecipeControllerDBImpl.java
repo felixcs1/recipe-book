@@ -14,12 +14,16 @@ public class RecipeControllerDBImpl implements RecipeControllerInterface {
 
     private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
+    private String all_recipes_query =
+            "SELECT recipes.recipe_id, recipes.recipe_name, recipes.description, recipes.serves " +
+            "FROM recipes;";
+
     private String recipe_by_id_query =
             "SELECT recipes.recipe_id, recipes.recipe_name, recipes.description, recipes.serves " +
             "FROM recipes " +
             "WHERE recipes.recipe_id = :id;";
 
-    private String food_by_id_query =
+    private String foods_by_id_query =
             "SELECT foods.food_name, recipe_foods.quantity, foods.units, foods.isLiquid " +
             "FROM recipes " +
             "INNER JOIN recipe_foods ON recipes.recipe_id=recipe_foods.recipe_id " +
@@ -39,6 +43,9 @@ public class RecipeControllerDBImpl implements RecipeControllerInterface {
             "recipes.recipe_id=instructions.recipe_id " +
             "WHERE recipes.recipe_id = :id;";
 
+    private String add_recipe_query =
+            "INSERT INTO recipes (recipe_name, description, serves) VALUES(:recipe_name, :description, :serves);";
+
     private String delete_recipe_by_id_update = "DELETE FROM recipes WHERE recipe_id = :id";
 
     public RecipeControllerDBImpl(NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
@@ -49,28 +56,6 @@ public class RecipeControllerDBImpl implements RecipeControllerInterface {
         final MapSqlParameterSource mappedParameters = new MapSqlParameterSource();
         mappedParameters.addValue("id", id);
 
-        // Get foods for given recipe
-        List<Food> foods = namedParameterJdbcTemplate.query(food_by_id_query, mappedParameters,
-                (ResultSet rs, int row) -> Food.builder()
-                        .name(rs.getString("food_name"))
-                        .quantity(rs.getInt("quantity"))
-                        .units(rs.getString("units"))
-                        .isLiquid(rs.getBoolean("isLiquid"))
-                        .build()
-        );
-
-        // Get tools for given recipe
-        List<Tool> tools = namedParameterJdbcTemplate.query(tools_by_id_query, mappedParameters,
-                (ResultSet rs, int row) -> Tool.builder()
-                        .name(rs.getString("tool_name"))
-                        .build()
-        );
-
-        // Get tools for given recipe
-        List<String> instructions = namedParameterJdbcTemplate.query(instruction_by_id_query, mappedParameters,
-                (ResultSet rs, int row) -> rs.getString("instruction")
-        );
-
         // Get recipes by id
         List<Recipe> recipes = namedParameterJdbcTemplate.query(recipe_by_id_query, mappedParameters,
                 (ResultSet rs, int row) -> Recipe.builder()
@@ -78,9 +63,9 @@ public class RecipeControllerDBImpl implements RecipeControllerInterface {
                         .recipe_name(rs.getString("recipe_name"))
                         .description(rs.getString("description"))
                         .serves(rs.getInt("serves"))
-                        .foods(foods)
-                        .neededTools(tools)
-                        .instructions(instructions)
+                        .foods(getFoodsByRecipeId(mappedParameters))
+                        .neededTools(getToolsByRecipeId(mappedParameters))
+                        .instructions(getInstructionByRecipeId(mappedParameters))
                         .build()
         );
 
@@ -93,11 +78,36 @@ public class RecipeControllerDBImpl implements RecipeControllerInterface {
     }
 
     public ArrayList<Recipe> getAllRecipes() {
-        return null;
+
+        // Get recipes by id
+        List<Recipe> recipes = namedParameterJdbcTemplate.query(all_recipes_query,
+                (ResultSet rs, int row) -> {
+
+                        final MapSqlParameterSource mappedParameters = new MapSqlParameterSource();
+                        mappedParameters.addValue("id", rs.getInt("recipe_id"));
+
+                        return Recipe.builder()
+                        .id(rs.getInt("recipe_id"))
+                        .recipe_name(rs.getString("recipe_name"))
+                        .description(rs.getString("description"))
+                        .serves(rs.getInt("serves"))
+                        .foods(getFoodsByRecipeId(mappedParameters))
+                        .neededTools(getToolsByRecipeId(mappedParameters))
+                        .instructions(getInstructionByRecipeId(mappedParameters))
+                        .build();
+                }
+        );
+        return new ArrayList<Recipe>(recipes);
     }
 
     public Recipe addRecipe(Recipe recipe) {
-       return null;
+        final MapSqlParameterSource mappedParameters = new MapSqlParameterSource();
+        mappedParameters.addValue("recipe_name", recipe.getRecipe_name());
+        mappedParameters.addValue("description", recipe.getDescription());
+        mappedParameters.addValue("servers", recipe.getServes());
+
+        int completed = namedParameterJdbcTemplate.update(add_recipe_query, mappedParameters);
+        return recipe;
     }
 
     public Recipe updateRecipe(int id, Recipe recipe) {
@@ -113,4 +123,29 @@ public class RecipeControllerDBImpl implements RecipeControllerInterface {
         return completed == 1 ? true : false;
     }
 
+    ///////////////---------- Helper Queries ------------//////////////////////////////////
+    public List<String> getInstructionByRecipeId(MapSqlParameterSource mappedParameters) {
+        return namedParameterJdbcTemplate.query(instruction_by_id_query, mappedParameters,
+                (ResultSet instr_rs, int instr_row) -> instr_rs.getString("instruction")
+        );
+    }
+
+    public List<Food> getFoodsByRecipeId(MapSqlParameterSource mappedParameters) {
+        return namedParameterJdbcTemplate.query(foods_by_id_query, mappedParameters,
+                (ResultSet rs, int row) -> Food.builder()
+                        .name(rs.getString("food_name"))
+                        .quantity(rs.getInt("quantity"))
+                        .units(rs.getString("units"))
+                        .isLiquid(rs.getBoolean("isLiquid"))
+                        .build()
+        );
+    }
+
+    public List<Tool> getToolsByRecipeId(MapSqlParameterSource mappedParameters) {
+        return namedParameterJdbcTemplate.query(tools_by_id_query, mappedParameters,
+                (ResultSet rs, int row) -> Tool.builder()
+                        .name(rs.getString("tool_name"))
+                        .build()
+        );
+    }
 }
